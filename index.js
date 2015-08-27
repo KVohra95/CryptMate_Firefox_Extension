@@ -20,13 +20,28 @@ exports.dummy = dummy;
 
 var generatedpassword = "";
 
-
+var panel = require("sdk/panel").Panel({
+    contentScriptFile: require("sdk/self").data.url("popup.js"),
+    contentURL: require("sdk/self").data.url("popup.html"),
+    contentScriptWhen: "ready"
+});
 
 var cm = require("sdk/context-menu");
 cm.Item({
-  label: "Insert Password",
-  context: cm.SelectorContext("input[type=password], input[type=text]"),
-  contentScript:  'self.on("click", function (node, data) {' +
-  '  node.value = "' + generatedpassword + '";' +
-  '});'
+    label: "Insert Password",
+    context: cm.SelectorContext("input[type=password], input[type=text]"),
+    contentScript:  'self.on("click", function (node, data) {' +
+                    //'  node.value = "' + generatedpassword + '";' +
+                    //'   panel.show();' +
+                    '  self.postMessage(node);' +
+                    '});',
+    onMessage: function (node)
+    {
+        panel.show();
+        panel.port.on("text-entered", function(message) {
+            console.log("hello");
+            node.value = message;
+        });
+    }
+
 });
