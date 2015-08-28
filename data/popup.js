@@ -48,44 +48,36 @@ self.port.on("subscriptionstatus", function(status)
     }
 });
 
-function showForms()
+self.port.on("error", error);
+
+self.port.on("ajax-return", function(ajaxReturn)
 {
-    var params =
+
+    var type = ajaxReturn[0];
+    var data = ajaxReturn[1];
+
+    switch (type)
     {
-        token: token,
-        domain: domain
-    };
+        case "error":
+            break;
 
-    console.log(params);
-
-    $.ajax({
-        type: "POST",
-        url: "https://www.cryptmate.com/processing/rest.php",
-        data: params,
-        success: function(data, status)
-        {
-            console.log("success");
-            var returndata = JSON.parse(data);
-            switch (returndata.returntype)
+        case "success":
+            switch (data.returntype)
             {
                 case "error":
-                    if(returndata.error == "invalidtoken")
+                    if(data.error == "invalidtoken")
                     {
-                        chrome.storage.sync.remove('token', function()
-                        {
-                            clearAll();
-                            $("#forms").hide();
-                            $("#loginprompt").show();
-                        });
+                        error("Invalid token");
+                        self.port.emit("clear-token");
                     }
                     else
                     {
-                        alert(returndata.error);
+                        error(data.error);
                     }
                     break;
 
                 case "newpassword":
-                    newpassword = returndata.newpassword;
+                    newpassword = data.newpassword;
                     if (newpassword)
                     {
                         clearAll();
@@ -102,10 +94,67 @@ function showForms()
                     }
                     break;
             }
-        },
-        error: function(){
-            console.log("fail");}
-    });
+
+            break;
+    }
+});
+
+function showForms()
+{
+    var params =
+    {
+        token: token,
+        domain: domain
+    };
+
+    self.port.emit("ajax-request", ["token", params]);
+
+    //$.ajax({
+    //    type: "POST",
+    //    url: "https://www.cryptmate.com/processing/rest.php",
+    //    data: params,
+    //    success: function(data, status)
+    //    {
+    //        var returndata = JSON.parse(data);
+    //        switch (returndata.returntype)
+    //        {
+    //            case "error":
+    //                if(returndata.error == "invalidtoken")
+    //                {
+    //                    chrome.storage.sync.remove('token', function()
+    //                    {
+    //                        clearAll();
+    //                        $("#forms").hide();
+    //                        $("#loginprompt").show();
+    //                    });
+    //                }
+    //                else
+    //                {
+    //                    alert(returndata.error);
+    //                }
+    //                break;
+    //
+    //            case "newpassword":
+    //                newpassword = returndata.newpassword;
+    //                if (newpassword)
+    //                {
+    //                    clearAll();
+    //                    $("#generatepassword").hide();
+    //                    $("#showpassword").hide();
+    //                    $("#createnewpassword").show();
+    //                }
+    //                else
+    //                {
+    //                    clearAll();
+    //                    $("#createnewpassword").hide();
+    //                    $("#showpassword").hide();
+    //                    $("#generatepassword").show();
+    //                }
+    //                break;
+    //        }
+    //    },
+    //    error: function(){}
+    //});
 }
 
 $("form").on('submit', function (e)
@@ -126,30 +175,33 @@ $("form").on('submit', function (e)
                 };
 
                 console.log(params);
-                $.ajax({
-                    type: "POST",
-                    url: "https://www.cryptmate.com/processing/rest.php",
-                    data: params,
-                    success: function(data, status)
-                    {
-                        var returndata = JSON.parse(data);
-                        switch (returndata.returntype)
-                        {
-                            case "error":
-                                alert(returndata.error);
-                                break;
-                            case "password":
-                                clearAll();
-                                $("#createnewpassword").hide();
-                                $("#generatepassword").hide();
-                                $("#showpassword").show();
-                                $("#generatedpassword").val(returndata.hash);
-                                break;
-                        }
-                    },
-                    error: function(){
-                    }
-                });
+
+                self.port.emit("ajax-request", ["generate", params]);
+
+                //$.ajax({
+                //    type: "POST",
+                //    url: "https://www.cryptmate.com/processing/rest.php",
+                //    data: params,
+                //    success: function(data, status)
+                //    {
+                //        var returndata = JSON.parse(data);
+                //        switch (returndata.returntype)
+                //        {
+                //            case "error":
+                //                alert(returndata.error);
+                //                break;
+                //            case "password":
+                //                clearAll();
+                //                $("#createnewpassword").hide();
+                //                $("#generatepassword").hide();
+                //                $("#showpassword").show();
+                //                $("#generatedpassword").val(returndata.hash);
+                //                break;
+                //        }
+                //    },
+                //    error: function(){
+                //    }
+                //});
             }
             else
             {
@@ -166,29 +218,31 @@ $("form").on('submit', function (e)
                 newpassword: false
             };
 
-            $.ajax({
-                type: "POST",
-                url: "https://www.cryptmate.com/processing/rest.php",
-                data: params,
-                success: function(data, status)
-                {
-                    var returndata = JSON.parse(data);
-                    switch (returndata.returntype)
-                    {
-                        case "error":
-                            alert(returndata.error);
-                            break;
-                        case "password":
-                            clearAll();
-                            $("#createnewpassword").hide();
-                            $("#generatepassword").hide();
-                            $("#showpassword").show();
-                            $("#generatedpassword").val(returndata.hash);
-                            break;
-                    }
-                },
-                error: function(){}
-            });
+            self.port.emit("ajax-request", ["generate", params]);
+
+            //$.ajax({
+            //    type: "POST",
+            //    url: "https://www.cryptmate.com/processing/rest.php",
+            //    data: params,
+            //    success: function(data, status)
+            //    {
+            //        var returndata = JSON.parse(data);
+            //        switch (returndata.returntype)
+            //        {
+            //            case "error":
+            //                alert(returndata.error);
+            //                break;
+            //            case "password":
+            //                clearAll();
+            //                $("#createnewpassword").hide();
+            //                $("#generatepassword").hide();
+            //                $("#showpassword").show();
+            //                $("#generatedpassword").val(returndata.hash);
+            //                break;
+            //        }
+            //    },
+            //    error: error
+            //});
 
             break;
     }
@@ -201,4 +255,9 @@ function clearAll()
     newpasswordform.value = "";
     confirmpasswordform.value = "";
     generatedpasswordform.value = "";
+}
+
+function error(message)
+{
+
 }

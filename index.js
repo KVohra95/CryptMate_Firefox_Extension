@@ -34,12 +34,74 @@ cm.Item({
 panel.port.on("password-generated", function(password) {
 
     panel.hide();
+    enterPassword(password);
 
+});
+
+panel.port.on("ajax-request", function(ajaxparams)
+{
+
+    var type = ajaxparams[0];
+    var params = ajaxparams[1];
+
+    switch (type)
+    {
+        case "token":
+            exports.main = function() {
+                var Request = require("request").Request;
+                Request({
+                    url: "https://www.cryptmate.com/processing/rest.php",
+                    content: params,
+                    onComplete: function (data) {
+                        var returndata = JSON.parse(data);
+                        switch (returndata.returntype)
+                        {
+                            case "error":
+                                panel.port.emit("error");
+                                break;
+                            case "password":
+                                panel.port.emit("ajax-return", returndata.hash);
+                                break;
+                        }
+                    }
+                }).post();
+            };
+            break;
+        case "generate":
+            exports.main = function() {
+                var Request = require("request").Request;
+                Request({
+                    url: "https://www.cryptmate.com/processing/rest.php",
+                    content: params,
+                    onComplete: function (data) {
+                        var returndata = JSON.parse(data);
+                        switch (returndata.returntype)
+                        {
+                            case "error":
+                                panel.port.emit("error");
+                                break;
+                            case "password":
+                                enterPassword(returndata.hash);
+                                panel.hide();
+                                break;
+                        }
+                    }
+                }).post();
+            };
+            break;
+    }
+});
+
+panel.port.on("clear-token", function(){
+    ss.storage.token = null;
+});
+
+function enterPassword(password)
+{
     var tabs = require("sdk/tabs");
     var contentScriptString = 'document.getElementById("' + clickedNode + '").value = "' + password + '"';
 
     tabs.activeTab.attach({
         contentScript: contentScriptString
     });
-
-});
+}
