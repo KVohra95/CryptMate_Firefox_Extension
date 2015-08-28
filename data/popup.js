@@ -12,22 +12,6 @@
 //    self.port.emit("text-entered", textArea.value);
 //}
 
-var selectedNode;
-
-
-
-self.port.on("node", function(node){
-    selectedNode = node;
-    console.log("node recieved");
-
-    $("#passwordform").on('submit', function(){
-        var textArea = document.getElementById("textbox");
-        //console.log(elements.serialize());
-        //console.log(textArea.value);
-        //self.port.emit("text-entered", textArea.value);
-        //node.value = textArea.value;
-        console.log(node);
-        console.log(node.value);
-        console.log(textArea.value);
-    });
+$('#passwordform').on('submit', function(e) {
+    self.port.emit("password-generated", $('#textbox').val());
 });

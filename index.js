@@ -23,21 +23,23 @@ cm.Item({
     label: "Insert Password",
     context: cm.SelectorContext("input[type=password], input[type=text]"),
     contentScript:  'self.on("click", function (node, data) {' +
-                    //'  node.value = "' + generatedpassword + '";' +
-                    //'   panel.show();' +
-                    '  self.postMessage(node);' +
+                    '  self.postMessage(node.getAttribute("id"));' +
                     '});',
     onMessage: function (node) {
         panel.show();
-        panel.port.emit("node", node);
+        clickedNode = node;
     }
 });
-//
-//self.port.on("node-recieved", function(node) {
-//    console.log(node.value);
-//});
 
-panel.port.on("text-entered", function(message) {
-    //console.log(ss.storage.node.value);
-    //node.value = message;
+panel.port.on("password-generated", function(password) {
+
+    panel.hide();
+
+    var tabs = require("sdk/tabs");
+    var contentScriptString = 'document.getElementById("' + clickedNode + '").value = "' + password + '"';
+
+    tabs.activeTab.attach({
+        contentScript: contentScriptString
+    });
+
 });
