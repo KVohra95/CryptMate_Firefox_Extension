@@ -10,7 +10,6 @@ function dummy(text, callback) {
 
 exports.dummy = dummy;
 
-var generatedpassword = "";
 var clickedNode;
 
 var panel = require("sdk/panel").Panel({
@@ -27,6 +26,7 @@ cm.Item({
                     '});',
     onMessage: function (node) {
         panel.show();
+        panel.port.emit("subscriptionstatus", [ss.storage.subscriptionended, ss.storage.token]);
         clickedNode = node;
     }
 });
