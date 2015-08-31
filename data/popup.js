@@ -77,7 +77,7 @@ function showForms()
                     }
                     else
                     {
-                        alert(returndata.error);
+                        error(returndata.error);
                     }
                     break;
 
@@ -131,7 +131,7 @@ $("form").on('submit', function (e)
                         switch (returndata.returntype)
                         {
                             case "error":
-                                alert(returndata.error);
+                                error(returndata.error);
                                 break;
                             case "password":
                                 clearAll();
@@ -170,7 +170,7 @@ $("form").on('submit', function (e)
                     switch (returndata.returntype)
                     {
                         case "error":
-                            alert(returndata.error);
+                            error(returndata.error);
                             break;
                         case "password":
                             clearAll();
