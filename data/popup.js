@@ -100,7 +100,7 @@ function showForms()
                     break;
             }
         },
-        error: function(){error("Internet connection failure");}
+        error: error("Internet connection failure")
     });
 }
 
@@ -142,8 +142,7 @@ $("form").on('submit', function (e)
                                 break;
                         }
                     },
-                    error: function(){
-                    }
+                    error: error("Internet connection failure")
                 });
             }
             else
@@ -182,7 +181,7 @@ $("form").on('submit', function (e)
                             break;
                     }
                 },
-                error: function(){}
+                error: error("Internet connection failure")
             });
 
             break;
@@ -196,4 +195,9 @@ function clearAll()
     newpasswordform.value = "";
     confirmpasswordform.value = "";
     generatedpasswordform.value = "";
+}
+
+function error(message)
+{
+    console.log(message);
 }
