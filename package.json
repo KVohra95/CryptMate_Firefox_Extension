@@ -4,7 +4,10 @@
   "version": "0.0.1",
   "description": "CryptMate firefox extension",
   "main": "index.js",
-  "author": "",
+  "author": "CryptMate",
+  "permissions": {
+    "cross-domain-content": ["https://www.cryptmate.com"]
+  },
   "engines": {
     "firefox": ">=38.0a1",
     "fennec": ">=38.0a1"

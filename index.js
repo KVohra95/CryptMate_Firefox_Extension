@@ -22,17 +22,17 @@ cm.Item({
     label: "Insert Password",
     context: cm.SelectorContext("input[type=password], input[type=text]"),
     contentScript:  'self.on("click", function (node, data) {' +
-                    '  self.postMessage(node.getAttribute("id"));' +
+                    '  self.postMessage([node.getAttribute("id"), window.location.hostname]);' +
                     '});',
-    onMessage: function (node) {
+    onMessage: function (returndata) {
         panel.show();
-        panel.port.emit("subscriptionstatus", [ss.storage.subscriptionended, ss.storage.token]);
-        clickedNode = node;
+        panel.port.emit("subscriptionstatus", [ss.storage.subscriptionended, ss.storage.token, returndata[1]]);
+        clickedNode = returndata[0];
     }
 });
 
-panel.port.on("password-generated", function(password) {
-
+panel.port.on("password-generated", function(password)
+{
     panel.hide();
 
     var tabs = require("sdk/tabs");
@@ -41,5 +41,9 @@ panel.port.on("password-generated", function(password) {
     tabs.activeTab.attach({
         contentScript: contentScriptString
     });
+});
+
+panel.port.on("remove", function(variable)
+{
 
 });

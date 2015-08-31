@@ -2,7 +2,7 @@
  * Created by Kabeer.Vohra on 8/27/2015.
  */
 
-var domain = window.location.hostname;
+var domain = "";
 var token = "";
 var newpassword = "";
 var passwordform = document.getElementById('password');
@@ -22,8 +22,9 @@ $('#passwordform').on('submit', function(e)
 self.port.on("subscriptionstatus", function(status)
 {
     var subscriptionended = status[0];
-    //var token = status[1];
-    var token = "HCoUQ9yGbjSP4iyLLAClrXCVbh3Uc2ZHuds9cOFbVlROrdq2BScSDFDCKtkKl0iDbyBbc5cYgRCvUQmlwn2ZStpqMz2Xx0qyxSxxMxjQfKcXqo8NBYAhfQySdnFAkUWFAj3cFcRIKTv16qBvf1CkGY1JbuajeUOE3FExFl6f5o6YFvjIlLSPyJox4mH66lzXQ2klddq6rkTWD3uOCbr1IFnzQUuL7RyKIGWLJaFYkoLLh4pH3GxAaKZOvhnpYLXx";
+    //token = status[1];
+    domain = status[2];
+    token = "HCoUQ9yGbjSP4iyLLAClrXCVbh3Uc2ZHuds9cOFbVlROrdq2BScSDFDCKtkKl0iDbyBbc5cYgRCvUQmlwn2ZStpqMz2Xx0qyxSxxMxjQfKcXqo8NBYAhfQySdnFAkUWFAj3cFcRIKTv16qBvf1CkGY1JbuajeUOE3FExFl6f5o6YFvjIlLSPyJox4mH66lzXQ2klddq6rkTWD3uOCbr1IFnzQUuL7RyKIGWLJaFYkoLLh4pH3GxAaKZOvhnpYLXx";
     if (subscriptionended == true)
     {
         clearAll();
@@ -56,7 +57,6 @@ function showForms()
         domain: domain
     };
 
-    console.log(params);
 
     $.ajax({
         type: "POST",
@@ -64,19 +64,16 @@ function showForms()
         data: params,
         success: function(data, status)
         {
-            console.log("success");
             var returndata = JSON.parse(data);
             switch (returndata.returntype)
             {
                 case "error":
                     if(returndata.error == "invalidtoken")
                     {
-                        chrome.storage.sync.remove('token', function()
-                        {
-                            clearAll();
-                            $("#forms").hide();
-                            $("#loginprompt").show();
-                        });
+
+                        clearAll();
+                        $("#forms").hide();
+                        $("#loginprompt").show();
                     }
                     else
                     {
@@ -103,8 +100,7 @@ function showForms()
                     break;
             }
         },
-        error: function(){
-            console.log("fail");}
+        error: function(){error("Internet connection failure");}
     });
 }
 
@@ -125,7 +121,6 @@ $("form").on('submit', function (e)
                     newpassword: true
                 };
 
-                console.log(params);
                 $.ajax({
                     type: "POST",
                     url: "https://www.cryptmate.com/processing/rest.php",
