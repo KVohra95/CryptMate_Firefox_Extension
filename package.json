@@ -12,5 +12,13 @@
     "firefox": ">=38.0a1",
     "fennec": ">=38.0a1"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "preferences": [
+    {
+      "type": "control",
+      "label": "Click here to login / logout",
+      "name": "credentials",
+      "title": "Login / Logout"
+    }
+  ]
 }

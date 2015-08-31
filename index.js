@@ -1,6 +1,10 @@
 var self = require('sdk/self');
 var ss = require("sdk/simple-storage");
 var cm = require("sdk/context-menu");
+var sp = require("sdk/simple-prefs");
+var pan = require("sdk/passwordpanel");
+
+require("sdk/tabs").open(self.data.url("index.html"));
 
 // a dummy function, to show how tests work.
 // to see how to test this function, look at test/test-index.js
@@ -12,9 +16,15 @@ exports.dummy = dummy;
 
 var clickedNode;
 
-var panel = require("sdk/panel").Panel({
+var passwordpanel = pan.Panel({
     contentURL: self.data.url("popup.html"),
     contentScriptFile: [self.data.url("jquery.js"), self.data.url("popup.js")],
+    contentScriptWhen: "ready"
+});
+
+var loginpanel = pan.Panel({
+    contentURL: self.data.url("options.html"),
+    contentScriptFile: [self.data.url("jquery.js"), self.data.url("options.js")],
     contentScriptWhen: "ready"
 });
 
@@ -25,15 +35,19 @@ cm.Item({
                     '  self.postMessage([node.getAttribute("id"), window.location.hostname]);' +
                     '});',
     onMessage: function (returndata) {
-        panel.show();
-        panel.port.emit("subscriptionstatus", [ss.storage.subscriptionended, ss.storage.token, returndata[1]]);
+        passwordpanel.show();
+        passwordpanel.port.emit("subscriptionstatus", [ss.storage.subscriptionended, ss.storage.token, returndata[1]]);
         clickedNode = returndata[0];
     }
 });
 
-panel.port.on("password-generated", function(password)
+sp.on("credentials", function() {
+    loginpanel.show();
+});
+
+passwordpanel.port.on("password-generated", function(password)
 {
-    panel.hide();
+    passwordpanel.hide();
 
     var tabs = require("sdk/tabs");
     var contentScriptString = 'document.getElementById("' + clickedNode + '").value = "' + password + '"';
@@ -43,7 +57,18 @@ panel.port.on("password-generated", function(password)
     });
 });
 
-panel.port.on("remove", function(variable)
+passwordpanel.port.on("remove", function(variable)
 {
+    eval("ss.storage." + variable + " = null;");
+});
 
+loginpanel.port.on("set", function(varval){
+    var variable = varval[0];
+    var value = varval[1];
+    eval("ss.storage." + variable + " = " + value + ";")
+});
+
+loginpanel.port.on("remove", function(variable)
+{
+    eval("ss.storage." + variable + " = null;");
 });

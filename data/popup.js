@@ -27,17 +27,11 @@ self.port.on("subscriptionstatus", function(status)
     token = "HCoUQ9yGbjSP4iyLLAClrXCVbh3Uc2ZHuds9cOFbVlROrdq2BScSDFDCKtkKl0iDbyBbc5cYgRCvUQmlwn2ZStpqMz2Xx0qyxSxxMxjQfKcXqo8NBYAhfQySdnFAkUWFAj3cFcRIKTv16qBvf1CkGY1JbuajeUOE3FExFl6f5o6YFvjIlLSPyJox4mH66lzXQ2klddq6rkTWD3uOCbr1IFnzQUuL7RyKIGWLJaFYkoLLh4pH3GxAaKZOvhnpYLXx";
     if (subscriptionended == true)
     {
-        clearAll();
-        $("#forms").hide();
-        $("#loginprompt").hide();
-        $("#subscriptionended").show();
+        error("Subscription has ended, please extend subscription to continue using the app");
     }
     else if (token == null)
     {
-        clearAll();
-        $("#subscriptionended").hide();
-        $("#forms").hide();
-        $("#loginprompt").show();
+        error("Not logged in, please log in from the addon options menu");
     }
     else
     {
@@ -70,10 +64,8 @@ function showForms()
                 case "error":
                     if(returndata.error == "invalidtoken")
                     {
-
-                        clearAll();
-                        $("#forms").hide();
-                        $("#loginprompt").show();
+                        self.port.emit("remove", "token");
+                        error("Logged in account not recognised, please log in again from the addon options menu");
                     }
                     else
                     {
@@ -100,7 +92,7 @@ function showForms()
                     break;
             }
         },
-        error: error("Internet connection failure")
+        error: error("Internet connection failure, please try again when internet connection is active")
     });
 }
 
@@ -142,12 +134,12 @@ $("form").on('submit', function (e)
                                 break;
                         }
                     },
-                    error: error("Internet connection failure")
+                    error: error("Internet connection failure, please try again when internet connection is active")
                 });
             }
             else
             {
-                alert("Passwords do not match");
+                error("Passwords do not match, please try again");
             }
             break;
         case "generatepassword":
@@ -181,7 +173,7 @@ $("form").on('submit', function (e)
                             break;
                     }
                 },
-                error: error("Internet connection failure")
+                error: error("Internet connection failure, please try again when internet connection is active")
             });
 
             break;
@@ -199,5 +191,6 @@ function clearAll()
 
 function error(message)
 {
+    clearAll();
     console.log(message);
 }
