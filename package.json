@@ -6,7 +6,7 @@
   "main": "index.js",
   "author": "CryptMate",
   "permissions": {
-    "cross-domain-content": ["https://www.cryptmate.com"]
+    "cross-domain-content": ["https://www.cryptmate.com", "http://www.cryptmate.com"]
   },
   "engines": {
     "firefox": ">=38.0a1",

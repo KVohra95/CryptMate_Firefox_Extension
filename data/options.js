@@ -9,8 +9,6 @@ $("form").on('submit', function (e)
         password: password
     };
 
-    //connect to online php file and obtain token, decode and store using chrome.storage.sync.set
-
     $.ajax({
         type: "POST",
         url: "https://www.cryptmate.com/processing/rest.php",
@@ -23,7 +21,7 @@ $("form").on('submit', function (e)
                     error(returndata.error);
                     break;
                 case "token":
-                    self.port.emit("set", ["token", returndata.token]);
+                    self.port.emit("set", ["token", '"' + returndata.token + '"']);
                     break;
                 case "subscriptionended":
                     self.port.emit("set", ["subscriptionended", "true"]);
@@ -36,12 +34,7 @@ $("form").on('submit', function (e)
     return false;
 });
 
-function logout()
-{
-    self.port.emit("remove", "token");
-}
-
-document.getElementById("logout").onclick = logout;
+document.getElementById("logout").onclick = function() {  self.port.emit("remove", "token");  };
 
 self.port.on("token", function(token) {
     if (token == null)

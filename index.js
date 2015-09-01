@@ -2,7 +2,7 @@ var self = require('sdk/self');
 var ss = require("sdk/simple-storage");
 var cm = require("sdk/context-menu");
 var sp = require("sdk/simple-prefs");
-var pan = require("sdk/passwordpanel");
+var pan = require("sdk/panel");
 
 require("sdk/tabs").open(self.data.url("index.html"));
 
@@ -66,10 +66,12 @@ passwordpanel.port.on("remove", function(variable)
 loginpanel.port.on("set", function(varval){
     var variable = varval[0];
     var value = varval[1];
-    eval("ss.storage." + variable + " = " + value + ";")
+    eval("ss.storage." + variable + " = " + value + ";");
+    loginpanel.port.emit("token", ss.storage.token);
 });
 
 loginpanel.port.on("remove", function(variable)
 {
     eval("ss.storage." + variable + " = null;");
+    loginpanel.port.emit("token", ss.storage.token);
 });

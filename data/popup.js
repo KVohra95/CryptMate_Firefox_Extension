@@ -5,6 +5,8 @@
 var domain = "";
 var token = "";
 var newpassword = "";
+var subscriptionended = false;
+var params = {};
 var passwordform = document.getElementById('password');
 var newpasswordform = document.getElementById('newpassword');
 var confirmpasswordform = document.getElementById('confirmpassword');
@@ -21,11 +23,11 @@ $('#passwordform').on('submit', function(e)
 
 self.port.on("subscriptionstatus", function(status)
 {
-    var subscriptionended = status[0];
-    //token = status[1];
+    subscriptionended = status[0];
+    token = status[1];
     domain = status[2];
-    token = "HCoUQ9yGbjSP4iyLLAClrXCVbh3Uc2ZHuds9cOFbVlROrdq2BScSDFDCKtkKl0iDbyBbc5cYgRCvUQmlwn2ZStpqMz2Xx0qyxSxxMxjQfKcXqo8NBYAhfQySdnFAkUWFAj3cFcRIKTv16qBvf1CkGY1JbuajeUOE3FExFl6f5o6YFvjIlLSPyJox4mH66lzXQ2klddq6rkTWD3uOCbr1IFnzQUuL7RyKIGWLJaFYkoLLh4pH3GxAaKZOvhnpYLXx";
-    if (subscriptionended == true)
+
+    if (subscriptionended)
     {
         error("Subscription has ended, please extend subscription to continue using the app");
     }
@@ -45,12 +47,11 @@ self.port.on("subscriptionstatus", function(status)
 
 function showForms()
 {
-    var params =
+    params =
     {
         token: token,
         domain: domain
     };
-
 
     $.ajax({
         type: "POST",
@@ -92,7 +93,7 @@ function showForms()
                     break;
             }
         },
-        error: error("Internet connection failure, please try again when internet connection is active")
+        error: function() {error("Internet connection failure, please try again when internet connection is active")}
     });
 }
 
@@ -105,7 +106,7 @@ $("form").on('submit', function (e)
             var confirmpassword = document.getElementById('confirmpassword').value;
             if (newpassword == confirmpassword)
             {
-                var params =
+                params =
                 {
                     token: token,
                     password: newpassword,
@@ -134,7 +135,7 @@ $("form").on('submit', function (e)
                                 break;
                         }
                     },
-                    error: error("Internet connection failure, please try again when internet connection is active")
+                    error: function() {error("Internet connection failure, please try again when internet connection is active")}
                 });
             }
             else
@@ -144,7 +145,7 @@ $("form").on('submit', function (e)
             break;
         case "generatepassword":
             var password = document.getElementById('password').value;
-            var params =
+            params =
             {
                 token: token,
                 password: password,
@@ -173,7 +174,7 @@ $("form").on('submit', function (e)
                             break;
                     }
                 },
-                error: error("Internet connection failure, please try again when internet connection is active")
+                error: function() {error("Internet connection failure, please try again when internet connection is active")}
             });
 
             break;
