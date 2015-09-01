@@ -7,10 +7,15 @@ var token = "";
 var newpassword = "";
 var subscriptionended = false;
 var params = {};
-var passwordform = document.getElementById('password');
-var newpasswordform = document.getElementById('newpassword');
-var confirmpasswordform = document.getElementById('confirmpassword');
-var generatedpasswordform = document.getElementById('generatedpassword');
+var passwordform = $("#password");
+var newpasswordform = $("#newpassword");
+var confirmpasswordform = $("#confirmpassword");
+var generatedpasswordform = $("#generatedpassword");
+var createnewpassworddiv = $("#createnewpassword");
+var generatepassworddiv = $("#generatepassword");
+var showpassworddiv = $("#showpassword");
+var errordiv = $("#error");
+var formsdiv = $("#forms");
 
 $('#passwordform').on('submit', function(e)
 {
@@ -38,9 +43,7 @@ self.port.on("subscriptionstatus", function(status)
     else
     {
         clearAll();
-        $("#subscriptionended").hide();
-        $("#loginprompt").hide();
-        $("#forms").show();
+        formsdiv.show();
         showForms();
     }
 });
@@ -79,16 +82,18 @@ function showForms()
                     if (newpassword)
                     {
                         clearAll();
-                        $("#generatepassword").hide();
-                        $("#showpassword").hide();
-                        $("#createnewpassword").show();
+                        errordiv.hide();
+                        generatepassworddiv.hide();
+                        showpassworddiv.hide();
+                        createnewpassworddiv.show();
                     }
                     else
                     {
                         clearAll();
-                        $("#createnewpassword").hide();
-                        $("#showpassword").hide();
-                        $("#generatepassword").show();
+                        errordiv.hide();
+                        createnewpassworddiv.hide();
+                        showpassworddiv.hide();
+                        generatepassworddiv.show();
                     }
                     break;
             }
@@ -128,10 +133,10 @@ $("form").on('submit', function (e)
                                 break;
                             case "password":
                                 clearAll();
-                                $("#createnewpassword").hide();
-                                $("#generatepassword").hide();
-                                $("#showpassword").show();
-                                $("#generatedpassword").val(returndata.hash);
+                                createnewpassworddiv.hide();
+                                generatepassworddiv.hide();
+                                showpassworddiv.show();
+                                generatedpasswordform.val(returndata.hash);
                                 break;
                         }
                     },
@@ -167,10 +172,10 @@ $("form").on('submit', function (e)
                             break;
                         case "password":
                             clearAll();
-                            $("#createnewpassword").hide();
-                            $("#generatepassword").hide();
-                            $("#showpassword").show();
-                            $("#generatedpassword").val(returndata.hash);
+                            createnewpassworddiv.hide();
+                            generatepassworddiv.hide();
+                            showpassworddiv.show();
+                            generatedpasswordform.val(returndata.hash);
                             break;
                     }
                 },
@@ -193,5 +198,7 @@ function clearAll()
 function error(message)
 {
     clearAll();
-    console.log(message);
+    errordiv.html(message);
+    formsdiv.hide();
+    errordiv.show();
 }

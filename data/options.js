@@ -1,12 +1,16 @@
+var username = $("#username");
+var password = $("#password");
+var loginform = $("#login");
+var logoutbtn = $("#logout");
+var errordiv = $("#error");
+
 $("form").on('submit', function (e)
 {
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
 
     var params =
     {
-        username: username,
-        password: password
+        username: username.val(),
+        password: password.val()
     };
 
     $.ajax({
@@ -34,17 +38,34 @@ $("form").on('submit', function (e)
     return false;
 });
 
-document.getElementById("logout").onclick = function() {  self.port.emit("remove", "token");  };
+logoutbtn.onclick = function() {  self.port.emit("remove", "token");  };
 
 self.port.on("token", function(token) {
     if (token == null)
     {
-        $("#logout").hide();
-        $("#login").show();
+        errordiv.hide();
+        logoutbtn.hide();
+        loginform.show();
     }
     else
     {
-        $("#login").hide();
-        $("#logout").show();
+        errordiv.hide();
+        loginform.hide();
+        logoutbtn.show();
     }
 });
+
+function clearAll()
+{
+    username.val("");
+    password.val("");
+}
+
+function error(message)
+{
+    clearAll();
+    errordiv.html(message);
+    loginform.hide();
+    logoutbtn.hide();
+    errordiv.show();
+}
