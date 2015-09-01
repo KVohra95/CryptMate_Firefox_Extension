@@ -43,6 +43,7 @@ cm.Item({
 
 sp.on("credentials", function() {
     loginpanel.show();
+    loginpanel.port.emit("token", ss.storage.token);
 });
 
 passwordpanel.port.on("password-generated", function(password)

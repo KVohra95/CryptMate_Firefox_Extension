@@ -43,18 +43,15 @@ function logout()
 
 document.getElementById("logout").onclick = logout;
 
-$(document).ready(function() {
-    chrome.storage.sync.get('token', function(data)
+self.port.on("token", function(token) {
+    if (token == null)
     {
-        if (typeof data.token == 'undefined')
-        {
-            $("#logout").hide();
-            $("#login").show();
-        }
-        else
-        {
-            $("#login").hide();
-            $("#logout").show();
-        }
-    });
+        $("#logout").hide();
+        $("#login").show();
+    }
+    else
+    {
+        $("#login").hide();
+        $("#logout").show();
+    }
 });
