@@ -10,7 +10,6 @@ var params = {};
 var passwordform = $("#password");
 var newpasswordform = $("#newpassword");
 var confirmpasswordform = $("#confirmpassword");
-var generatedpasswordform = $("#generatedpassword");
 var createnewpassworddiv = $("#createnewpassword");
 var generatepassworddiv = $("#generatepassword");
 var showpassworddiv = $("#showpassword");
@@ -186,7 +185,6 @@ function clearAll()
     passwordform.value = "";
     newpasswordform.value = "";
     confirmpasswordform.value = "";
-    generatedpasswordform.value = "";
 }
 
 function error(message)
