@@ -116,7 +116,7 @@ $("form").on('submit', function (e)
                     token: token,
                     password: newpassword,
                     domain: domain,
-                    newpassword: true
+                    newpassword: 1
                 };
 
                 $.ajax({
@@ -133,10 +133,7 @@ $("form").on('submit', function (e)
                                 break;
                             case "password":
                                 clearAll();
-                                createnewpassworddiv.hide();
-                                generatepassworddiv.hide();
-                                showpassworddiv.show();
-                                generatedpasswordform.val(returndata.hash);
+                                self.port.emit("password-generated", returndata.hash);
                                 break;
                         }
                     },
@@ -155,7 +152,7 @@ $("form").on('submit', function (e)
                 token: token,
                 password: password,
                 domain: domain,
-                newpassword: false
+                newpassword: 0
             };
 
             $.ajax({
@@ -172,10 +169,7 @@ $("form").on('submit', function (e)
                             break;
                         case "password":
                             clearAll();
-                            createnewpassworddiv.hide();
-                            generatepassworddiv.hide();
-                            showpassworddiv.show();
-                            generatedpasswordform.val(returndata.hash);
+                            self.port.emit("password-generated", returndata.hash);
                             break;
                     }
                 },
