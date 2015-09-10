@@ -15,6 +15,7 @@ var generatepassworddiv = $("#generatepassword");
 var showpassworddiv = $("#showpassword");
 var errordiv = $("#error");
 var formsdiv = $("#forms");
+var linkdomains = $("#linkdomains");
 
 $('#passwordform').on('submit', function(e)
 {
@@ -85,6 +86,18 @@ function showForms()
                         generatepassworddiv.hide();
                         showpassworddiv.hide();
                         createnewpassworddiv.show();
+
+                        linkdomains.append($('<option></option>').val("").html(""));
+
+                        var keyeddomains = returndata.keyeddomains;
+
+                        $.each(keyeddomains, function(i)
+                        {
+                            linkdomains.append
+                            (
+                                $('<option></option>').val(keyeddomains[i]).html(keyeddomains[i])
+                            );
+                        });
                     }
                     else
                     {
@@ -106,8 +119,10 @@ $("form").on('submit', function (e)
     switch (e.target.id)
     {
         case "createnewpassword":
-            var newpassword = document.getElementById('newpassword').value;
-            var confirmpassword = document.getElementById('confirmpassword').value;
+            var newpassword = newpasswordform.val();
+            var confirmpassword = confirmpasswordform.val();
+            var linkeddomain = linkdomains.find("option:selected").text();
+
             if (newpassword == confirmpassword)
             {
                 params =
@@ -115,7 +130,8 @@ $("form").on('submit', function (e)
                     token: token,
                     password: newpassword,
                     domain: domain,
-                    newpassword: 1
+                    newpassword: 1,
+                    linkeddomain: linkeddomain
                 };
 
                 $.ajax({
@@ -145,7 +161,7 @@ $("form").on('submit', function (e)
             }
             break;
         case "generatepassword":
-            var password = document.getElementById('password').value;
+            var password = passwordform.val();
             params =
             {
                 token: token,
